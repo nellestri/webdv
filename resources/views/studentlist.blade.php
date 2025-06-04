@@ -1,6 +1,6 @@
-
 @extends('base')
-@section('title', 'Student Lists')
+@section('title', 'Student Lists')Add commentMore actions
+
 <table class="table">
     <thead>
         <tr>
