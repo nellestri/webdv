@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Students;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class StudentsController extends Controller
 {
@@ -41,6 +42,34 @@ class StudentsController extends Controller
 
             return back()->with('error', 'Failed to add student. Please try again.')
                         ->withInput();
+        }
+    }
+
+    public function deleteStudent($id)
+    {
+        try {
+            $student = Students::findOrFail($id);
+            $student->delete();
+
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Student deleted successfully!'
+                ]);
+            }
+
+            return redirect()->route('std.myView')->with('success', 'Student deleted successfully!');
+        } catch (\Exception $e) {
+            Log::error('Error deleting student: ' . $e->getMessage());
+
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to delete student. Please check the ID or contact support.'
+                ], 422);
+            }
+
+            return back()->with('error', 'Failed to delete student. Please check the ID or contact support.');
         }
     }
 }
