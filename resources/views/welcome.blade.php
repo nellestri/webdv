@@ -7,6 +7,13 @@
             <p class="text-center">This is the home page. You can manage students here.</p>
         </div>
     </div>
+    <div>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="btn btn-danger mt-3">Logout</button>
+        </form>
+
+    </div>
     <div class="container mt-5">
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -47,53 +54,62 @@
             </thead>
             <tbody id="studentsTable">
                 @foreach($students as $student)
-                <tr>
-                    <th scope="row">{{ $loop->iteration }}</th>
-                    <td>{{ $student->name }}</td>
-                    <td>{{ $student->age }}</td>
-                    <td>{{ $student->gender }}</td>
-                    <td>
-                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $student->id }}">Edit</button>
-                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteStudent({{ $student->id }})">Delete</button>
-                    </td>
-                </tr>
+                    <tr>
+                        <th scope="row">{{ $loop->iteration }}</th>
+                        <td>{{ $student->name }}</td>
+                        <td>{{ $student->age }}</td>
+                        <td>{{ $student->gender }}</td>
+                        <td>
+                            <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#editModal{{ $student->id }}">Edit</button>
+                            <button type="button" class="btn btn-danger btn-sm"
+                                onclick="deleteStudent({{ $student->id }})">Delete</button>
+                        </td>
+                    </tr>
 
-                <!-- Edit Modal -->
-                <div class="modal fade" id="editModal{{ $student->id }}" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content bg-dark text-white">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Edit Student</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="editStudentForm{{ $student->id }}" method="POST" action="{{ route('std.updateStudent', $student->id) }}">
-                                    @csrf
-                                    <div class="mb-3">
-                                        <label for="name" class="form-label">Name</label>
-                                        <input type="text" class="form-control" name="name" value="{{ $student->name }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="age" class="form-label">Age</label>
-                                        <input type="number" class="form-control" name="age" value="{{ $student->age }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="gender" class="form-label">Gender</label>
-                                        <select class="form-select" name="gender" required>
-                                            <option value="Male" {{ $student->gender == 'Male' ? 'selected' : '' }}>Male</option>
-                                            <option value="Female" {{ $student->gender == 'Female' ? 'selected' : '' }}>Female</option>
-                                            <option value="Other" {{ $student->gender == 'Other' ? 'selected' : '' }}>Other</option>
-                                        </select>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Update</button>
-                                    </div>
-                                </form>
+                    <!-- Edit Modal -->
+                    <div class="modal fade" id="editModal{{ $student->id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content bg-dark text-white">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Edit Student</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="editStudentForm{{ $student->id }}" method="POST"
+                                        action="{{ route('std.updateStudent', $student->id) }}">
+                                        @csrf
+                                        <div class="mb-3">
+                                            <label for="name" class="form-label">Name</label>
+                                            <input type="text" class="form-control" name="name" value="{{ $student->name }}"
+                                                required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="age" class="form-label">Age</label>
+                                            <input type="number" class="form-control" name="age" value="{{ $student->age }}"
+                                                required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="gender" class="form-label">Gender</label>
+                                            <select class="form-select" name="gender" required>
+                                                <option value="Male" {{ $student->gender == 'Male' ? 'selected' : '' }}>Male
+                                                </option>
+                                                <option value="Female" {{ $student->gender == 'Female' ? 'selected' : '' }}>Female
+                                                </option>
+                                                <option value="Other" {{ $student->gender == 'Other' ? 'selected' : '' }}>Other
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Update</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 @endforeach
             </tbody>
         </table>
@@ -137,28 +153,28 @@
         </div>
     </div>
 
-@push('scripts')
-<script>
-function deleteStudent(id) {
-    if (confirm('Are you sure you want to delete this student?')) {
-        fetch(`/students/delete/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'X-Requested-With': 'XMLHttpRequest'
+    @push('scripts')
+        <script>
+            function deleteStudent(id) {
+                if (confirm('Are you sure you want to delete this student?')) {
+                    fetch(`/students/delete/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                location.reload();
+                            } else {
+                                alert(data.message);
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                }
             }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                alert(data.message);
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    }
-}
-</script>
-@endpush
+        </script>
+    @endpush
 @endsection
